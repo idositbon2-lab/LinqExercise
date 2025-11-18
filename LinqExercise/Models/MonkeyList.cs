@@ -158,69 +158,89 @@ namespace LinqExercise.Models
 				ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Gelada-Pavian.jpg/320px-Gelada-Pavian.jpg"
 			});
 		}
-		//1
-		public Monkey SearchMonkeyByName(string name)
-		{
+        //1
+        public Monkey SearchMonkeyByName(string name)
+        {
+            return Monkeys.FirstOrDefault(m => m.Name == name);
 
-			throw new NotImplementedException("not implemented yet");
-		}
-		//2
-		public List<Monkey> GetAllMonkeysPerLocation(string location)
-		{
-			throw new NotImplementedException("not implemented yet");
-		}
-		//3
-		public bool IsThereMonkeyInThatLocation(string location)
-		{
-			throw new NotImplementedException("not implemented yet");
-		}
-		//4
-		public List<Monkey> SortByLocattionAndName()
-		{
+        }
+        //2
+        public List<Monkey> GetAllMonkeysPerLocation(string location)
+        {
+            return Monkeys.Where(m => m.Location == location).ToList();
+        }
+        //3
+        public bool IsThereMonkeyInThatLocation(string location)
+        {
+            return Monkeys.Any(m => m.Location == location);
 
-			throw new NotImplementedException("not implemented yet");
-		}
-		//5
-		public Monkey SearchMonkeyByNameQuery(string name)
-		{
-			throw new NotImplementedException("not implemented yet");
-		}
-		//6
-		public List<Monkey> GetAllMonkeysPerLocationQuery(string location)
-		{
-			throw new NotImplementedException("not implemented yet");
-		}
+        }
+        //4
+        public List<Monkey> SortByLocattionAndName()
+        {
+            return Monkeys.OrderBy(m => m.Location).ThenBy(m => m.Name).ToList();
+        }
+        //5
+        public Monkey SearchMonkeyByNameQuery(string name)
+        {
+            return (from m in Monkeys
+                    where m.Name == name
+                    select m).FirstOrDefault();
+        }
+        //6
+        public List<Monkey> GetAllMonkeysPerLocationQuery(string location)
+        {
+            return (from m in Monkeys
+                    where m.Location == location
+                    select m).ToList();
+        }
 
-		//7
-		public List<Monkey> SortByLocattionAndNameQuery()
-		{
-			throw new NotImplementedException("not implemented yet");
-		}
-		//8
-		public void PrintNumberOfMonkeysPerLocation()
-		{
-			Console.WriteLine("not Implemented yet");
-		}
-		//9
-		public void PrintNumberOfMonkeysPerLocationQuery()
-		{
-		Console.WriteLine("not Implemented yet");
-		}
-		//10
-		public Monkey[] GetAllMonkeysByName(string name)
-		{
-			throw new NotImplementedException("not implemented yet");
-		}
-		//11 - Create a dictionary where the key is the name of the monkey and
-		//the value is the monkey object
-		public Dictionary<string, Monkey> CreateDictionaryFromMonkeyList()
-		{
-			throw new NotImplementedException("not implemented yet");
-		}
-		//12 - Use the dictionary created in 11 to do the next search!
-		public bool MonkeExistByName(string name)
-		{
-			throw new NotImplementedException("not implemented yet");
-		}
-	}
+        //7
+        public List<Monkey> SortByLocattionAndNameQuery()
+        {
+            return (from m in Monkeys
+                    orderby m.Location, m.Name
+                    select m).ToList();
+        }
+        //8
+        public void PrintNumberOfMonkeysPerLocation()
+        {
+            foreach (var group in Monkeys.GroupBy(m => m.Location))
+            {
+                Console.WriteLine($"in {group.Key} there are : {group.Count()} monkeys");
+            }
+        }
+        //9
+        public void PrintNumberOfMonkeysPerLocationQuery()
+        {
+            var x = from m in Monkeys
+                    group m by m.Location into g
+                    select (g.Key, g.Count());
+            foreach (var item in x)
+            {
+                Console.WriteLine($"{item.Key} count={item.Item2}");
+            }
+
+
+
+
+        }
+        public Monkey[] GetAllMonkeysByName(string name)
+        {
+            return Monkeys.Where(m => m.Name == name).ToArray();
+
+        }
+        //11 - Create a dictionary where the key is the name of the monkey and
+        //the value is the monkey object
+        public Dictionary<string, Monkey> CreateDictionaryFromMonkeyList()
+        {
+            return Monkeys.ToDictionary(m => m.Name, m => m);
+
+        }
+        //12 - Use the dictionary created in 11 to do the next search!
+        public bool MonkeExistByName(string name)
+        {
+            return Monkeys.Any(m => m.Name == name);
+        }
+    }
 }
